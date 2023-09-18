@@ -1,0 +1,11 @@
+SELECT ORCT."DocNum", RCT1."CheckNum"  FROM ORCT 
+INNER JOIN RCT1 ON RCT1."DocNum" = ORCT."DocEntry" 
+WHERE "CheckNum" = 208
+
+
+SELECT * FROM ODPS 
+INNER JOIN OCHH ON OCHH."DpstAbs" = ODPS."DeposId" 
+WHERE OCHH."CheckNum" = 207;
+SELECT* FROM ochh
+
+DpstAbs
