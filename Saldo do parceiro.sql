@@ -12,8 +12,8 @@ T0."U_CodigoItem",
 T0."U_TipoContrato",
 T0."Code"
 FROM
-"SBOGRUPOROVEMA"."@AMFS_CNTR"  
-T0 INNER JOIN  "SBOGRUPOROVEMA"."@AMFS_RETR"  T1 ON T0."Code" = T1."U_CodContrato" 
+"@AMFS_CNTR"  
+T0 INNER JOIN  "@AMFS_RETR"  T1 ON T0."Code" = T1."U_CodContrato" 
 WHERE T0."Canceled" = 'N' AND  T1."Canceled"  = 'N'
 
 

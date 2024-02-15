@@ -1,4 +1,4 @@
-set schema SBOGRUPOROVEMA;
+set schema '';
 
 DROP PROCEDURE "spcJBCFUNRURAL";
 
