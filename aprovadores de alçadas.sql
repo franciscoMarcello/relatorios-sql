@@ -1,0 +1,8 @@
+
+
+
+SELECT MP."Name",MP."Remarks", U."U_NAME" FROM OWTM MP
+INNER JOIN WTM2 ST ON ST."WtmCode" = MP."WtmCode"
+INNER JOIN WST1 ET ON ST."WstCode" = ET."WstCode"
+INNER JOIN OUSR U ON ET."UserID" = U."USERID"
+WHERE MP."Active" = 'Y'
