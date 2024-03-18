@@ -29,8 +29,8 @@ T5."ItemCode" as "CodProduto",
 T5."Dscription" as "Produto",
 T5."U_ROV_PREBASE",
 T5."U_preco_negociado",
-COALESCE((SELECT SUM(COALESCE(NULLIF("U_TX_VlDeL", 0),"TaxSum")) FROM "INV4" tax WHERE tax."DocEntry" = T5."DocEntry" AND tax."staType" = 25 AND tax."LineNum" = T5."LineNum"),0) AS "desonerado",
-T5."LineTotal"-COALESCE((SELECT SUM(COALESCE(NULLIF("U_TX_VlDeL", 0),"TaxSum")) FROM "INV4" tax WHERE tax."DocEntry" = T5."DocEntry" AND tax."staType" = 25 AND tax."LineNum" = T5."LineNum"),0) AS "faturado",
+COALESCE((SELECT SUM(COALESCE(NULLIF("U_TX_VlDeL", 0),"TaxSum")) FROM "INV4" tax WHERE tax."DocEntry" = T5."DocEntry" AND (tax."staType" = 25 OR tax."staType" = 28 OR tax."staType" = 10) AND tax."LineNum" = T5."LineNum"),0) AS "desonerado",
+T5."LineTotal"-COALESCE((SELECT SUM(COALESCE(NULLIF("U_TX_VlDeL", 0),"TaxSum")) FROM "INV4" tax WHERE tax."DocEntry" = T5."DocEntry" AND (tax."staType" = 25 OR tax."staType" = 28 OR tax."staType" = 10) AND tax."LineNum" = T5."LineNum"),0) AS "faturado",
 T5."Quantity",
 T7."PymntGroup",
 T11."U_regressiva",
@@ -41,7 +41,7 @@ COALESCE(T8."LineTotal",0) as "Frete"
 
 FROM "OINV" T0
  INNER JOIN "INV6" T3 ON T3."DocEntry" = T0."DocEntry" 
- INNER JOIN "RCT2" T1 ON T1."DocEntry" = T0."DocEntry" AND
+INNER JOIN "RCT2" T1 ON T1."DocEntry" = T0."DocEntry" AND
 T1."DocTransId" = T0."TransId" AND T1."InstId" = T3."InstlmntID" 
  INNER JOIN "ORCT" T2 ON T2."DocEntry" = T1."DocNum"
  INNER JOIN "OSLP" T4 ON T0."SlpCode" = T4."SlpCode"
@@ -56,8 +56,9 @@ T1."DocTransId" = T0."TransId" AND T1."InstId" = T3."InstlmntID"
 T0."CANCELED" = 'N' AND
 T6."RefDocNum" IS NULL AND 
 (T5."Usage" = 9 or T5."Usage" = 16)
-AND T0."DocDate" >= TO_DATE(20230701,'YYYYMMDD')
+--AND T0."DocDate" >= TO_DATE(20230701,'YYYYMMDD')
 AND T9."RefDocNum" IS NULL
+AND T0."U_Rov_Refaturamento" = 'NAO'
  
  UNION 
  
@@ -90,8 +91,8 @@ T5."ItemCode" as "CodProduto",
 T5."Dscription" as "Produto",
 T5."U_ROV_PREBASE",
 T5."U_preco_negociado",
-COALESCE((SELECT SUM(COALESCE(NULLIF("U_TX_VlDeL", 0),"TaxSum")) FROM "INV4" tax WHERE tax."DocEntry" = T5."DocEntry" AND tax."staType" = 25 AND tax."LineNum" = T5."LineNum"),0) AS "desonerado",
-T5."LineTotal"-COALESCE((SELECT SUM(COALESCE(NULLIF("U_TX_VlDeL", 0),"TaxSum")) FROM "INV4" tax WHERE tax."DocEntry" = T5."DocEntry" AND tax."staType" = 25 AND tax."LineNum" = T5."LineNum"),0) AS "faturado",
+COALESCE((SELECT SUM(COALESCE(NULLIF("U_TX_VlDeL", 0),"TaxSum")) FROM "INV4" tax WHERE tax."DocEntry" = T5."DocEntry" AND (tax."staType" = 25 OR tax."staType" = 28 OR tax."staType" = 10)AND tax."LineNum" = T5."LineNum"),0) AS "desonerado",
+T5."LineTotal"-COALESCE((SELECT SUM(COALESCE(NULLIF("U_TX_VlDeL", 0),"TaxSum")) FROM "INV4" tax WHERE tax."DocEntry" = T5."DocEntry" AND (tax."staType" = 25 OR tax."staType" = 28 OR tax."staType" = 10) AND tax."LineNum" = T5."LineNum"),0) AS "faturado",
 T5."Quantity",
 T7."PymntGroup",
 T11."U_regressiva",
@@ -104,7 +105,7 @@ FROM "OINV" T0
  INNER JOIN "INV6" T3 ON T3."DocEntry" = T0."DocEntry" 
  INNER JOIN "INV9" T12 ON T0."DocEntry" = T12."DocEntry" 
  INNER JOIN "RCT2" T1 ON T12."BaseAbs" = T1."DocEntry" AND T1."InvType"  = 203
- LEFT JOIN "ORCT" T2 ON T2."DocEntry" = T1."DocNum"
+ INNER  JOIN "ORCT" T2 ON T2."DocEntry" = T1."DocNum"
  INNER JOIN "OSLP" T4 ON T0."SlpCode" = T4."SlpCode"
  INNER JOIN "INV1" T5 ON T0."DocEntry" = T5."DocEntry"
  INNER JOIN "OCTG" T7 ON T0."GroupNum" =T7."GroupNum"
@@ -116,10 +117,15 @@ FROM "OINV" T0
  WHERE T0."CANCELED" = 'N' AND
 T6."RefDocNum" IS NULL AND 
 (T5."Usage" = 9 or T5."Usage" = 16)
-AND T0."DocDate" >= TO_DATE(20230701,'YYYYMMDD')
+--AND T0."DocDate" >= TO_DATE(20230701,'YYYYMMDD')
 AND T9."RefDocNum" IS NULL
+AND T0."U_Rov_Refaturamento" = 'NAO'
  )
-WHERE 
+WHERE
 "Data de Pagamento" >={?DateInicio}
 AND "Data de Pagamento" <={?DateFinal}
+
+
+
+
 
