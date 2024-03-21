@@ -15,9 +15,8 @@ CASE
 	WHEN	T1."PaidSum" = 0  THEN T1."AppliedSys"
 	ELSE T1."PaidSum" 
 END AS "Total pago",
-T1."PaidSum",
-T3."InstlmntID" AS "Parcela",
-T3."DueDate" AS "Data de Vencimento" ,
+--T3."InstlmntID" AS "Parcela",
+--T3."DueDate" AS "Data de Vencimento" ,
 T0."BPLId",
 T0."BPLName",
 T0."SlpCode",
@@ -49,35 +48,32 @@ T1."DocTransId" = T0."TransId" AND T1."InstId" = T3."InstlmntID"
  LEFT JOIN "OPLN" T10 ON T5."U_idTabela" = T10."ListNum"
  LEFT JOIN "@COMISSAO" T11 ON T10."U_tipoComissao" = T11."Code"
  WHERE 
---T0."CANCELED" = 'N' AND
---T6."RefDocNum" IS NULL AND 
---(T5."Usage" = 9 or T5."Usage" = 16)
---AND T0."DocDate" >= TO_DATE(20230701,'YYYYMMDD')
---AND T9."RefDocNum" IS NULL
---AND T1."PaidSum" = 0
-T0."DocEntry" = 33654
+T0."CANCELED" = 'N' AND
+T6."RefDocNum" IS NULL AND 
+(T5."Usage" = 9 or T5."Usage" = 16)
+AND T0."DocDate" >= TO_DATE(20230701,'YYYYMMDD')
+AND T9."RefDocNum" IS NULL
+AND T0."U_Rov_Refaturamento" = 'NAO' 
 AND T1."PaidSum" IS NULL 
- UNION 
+
+UNION 
  
  SELECT 
 T0."CardCode",
 T0."DocEntry",
 T0."CardName" AS "Cliente",
-T2."DocNum" AS "Nº Pagamento#",
-T2."DocEntry",
 T5."Price",
 T0."Serial" AS "Nº Nota",
 T1."InstId",
 T0."Installmnt" as "Nº Parcelas",
 T0."DocDate" AS "Data de lançamento",
 T12."DrawnSum" AS "Total Nota",
-T2."DocDate" AS "Data de Pagamento",
 CASE 
 	WHEN	T1."PaidSum" = 0  THEN T1."AppliedSys"
 	ELSE T1."PaidSum" 
 END AS "Total pago",
-T3."InstlmntID" AS "Parcela",
-T3."DueDate" AS "Data de Vencimento" ,
+--T3."InstlmntID" AS "Parcela",
+--T3."DueDate" AS "Data de Vencimento" ,
 T0."BPLId",
 T0."BPLName",
 T0."SlpCode",
@@ -99,8 +95,7 @@ COALESCE(T8."LineTotal",0) as "Frete"
 FROM "OINV" T0
  INNER JOIN "INV6" T3 ON T3."DocEntry" = T0."DocEntry" 
  INNER JOIN "INV9" T12 ON T0."DocEntry" = T12."DocEntry" 
- INNER JOIN "RCT2" T1 ON T12."BaseAbs" = T1."DocEntry" AND T1."InvType"  = 203
- INNER JOIN "ORCT" T2 ON T2."DocEntry" = T1."DocNum"
+ left JOIN "RCT2" T1 ON T12."DocEntry" = T1."DocEntry" AND T1."InvType"  = 203
  INNER JOIN "OSLP" T4 ON T0."SlpCode" = T4."SlpCode"
  INNER JOIN "INV1" T5 ON T0."DocEntry" = T5."DocEntry"
  INNER JOIN "OCTG" T7 ON T0."GroupNum" =T7."GroupNum"
@@ -109,13 +104,18 @@ FROM "OINV" T0
  LEFT JOIN "INV3" T8 ON T0."DocEntry" = T8."DocEntry"
  LEFT JOIN "OPLN" T10 ON T5."U_idTabela" = T10."ListNum"
  LEFT JOIN "@COMISSAO" T11 ON T10."U_tipoComissao" = T11."Code"
- WHERE T2."Canceled" = 'N' AND
+ WHERE 
 T0."CANCELED" = 'N' AND
 T6."RefDocNum" IS NULL AND 
 (T5."Usage" = 9 or T5."Usage" = 16)
 AND T0."DocDate" >= TO_DATE(20230701,'YYYYMMDD')
 AND T9."RefDocNum" IS NULL
+AND T0."U_Rov_Refaturamento" = 'NAO' 
+AND T1."PaidSum" IS NULL 
  )
 WHERE 
-"Data de Pagamento" >=TO_DATE(20240101,'YYYYMMDD')
-AND "Data de Pagamento" <=TO_DATE(20240131,'YYYYMMDD')
+"Data de lançamento" >=TO_DATE(20240101,'YYYYMMDD')
+AND "Data de lançamento" <=TO_DATE(20240131,'YYYYMMDD')
+
+
+
