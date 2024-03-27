@@ -80,6 +80,7 @@ WHERE
 	AND T0."DocDate" >= {?data1}
 	AND T0."DocDate" <= {?data2}
 	AND T1."Usage" in(9,16)
+               AND T7."U_grupo_sustennutri" = 'racao'
 	AND T7."U_categoria" in('aves','suino')
 	AND T4."RefDocNum" IS NULL
 	AND T0."U_Rov_Refaturamento" = 'NAO'

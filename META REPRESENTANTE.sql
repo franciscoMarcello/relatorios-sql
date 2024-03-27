@@ -81,6 +81,7 @@ WHERE
 	AND T0."DocDate" <= {?Data1}
 	AND T1."Usage" in(9,16)
 	AND T7."U_categoria" = 'bov'
+	AND T7."U_grupo_sustennutri" = 'racao'
 	AND T4."RefDocNum" IS NULL
 	AND T0."U_Rov_Refaturamento" = 'NAO'
 	AND T0."CardCode" NOT IN(

@@ -77,9 +77,10 @@ LEFT JOIN "CORDENADORESTRUTURA" cordena ON
 	T2."SlpCode" = cordena."codVendedor"
 WHERE
 	T0.CANCELED = 'N'
-	AND T0."DocDate" >= '20240205'
-	AND T0."DocDate" <= '20240212'
+	AND T0."DocDate" >={?data1}
+	AND T0."DocDate" <={?data2}
 	AND T1."Usage" in(9,16)
+               AND T7."U_categoria" = 'milho'
 	AND T7."U_grupo_sustennutri" in('quirela', 'milho')
 	AND T4."RefDocNum" IS NULL
 	AND T0."U_Rov_Refaturamento" = 'NAO'
@@ -119,8 +120,3 @@ GROUP BY
 	"Meta(R$)",
 	"U_MNO_Mes",
 	"Mes"
-
-	
-
-
-	

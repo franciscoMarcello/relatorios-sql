@@ -104,7 +104,7 @@ COALESCE(T8."LineTotal",0) as "Frete"
 FROM "OINV" T0
  INNER JOIN "INV6" T3 ON T3."DocEntry" = T0."DocEntry" 
  INNER JOIN "INV9" T12 ON T0."DocEntry" = T12."DocEntry" 
- INNER JOIN "RCT2" T1 ON T12."BaseAbs" = T1."DocEntry" AND T1."InvType"  = 203
+ INNER JOIN "RCT2" T1 ON T12."DocEntry" = T1."DocEntry" AND T1."InvType"  = 203
  INNER  JOIN "ORCT" T2 ON T2."DocEntry" = T1."DocNum"
  INNER JOIN "OSLP" T4 ON T0."SlpCode" = T4."SlpCode"
  INNER JOIN "INV1" T5 ON T0."DocEntry" = T5."DocEntry"
@@ -124,6 +124,7 @@ AND T0."U_Rov_Refaturamento" = 'NAO'
 WHERE
 "Data de Pagamento" >={?DateInicio}
 AND "Data de Pagamento" <={?DateFinal}
+
 
 
 
