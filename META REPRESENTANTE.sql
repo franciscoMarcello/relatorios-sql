@@ -1,6 +1,7 @@
 SELECT 
     "SlpName",
 	"SlpCode",
+	--"Serial",
 	"nomeCordenador",
 	"U_MNO_Municipio",
     "Ano",
@@ -43,14 +44,7 @@ SELECT
 	END AS "Mes",
 	SUM(T1."Quantity") AS "Faturado(SC)",
 	SUM(T1."Quantity" * grupo."BaseQty" ) AS "Faturado(kg)",
-	COALESCE(
-	CASE
-		WHEN T0."DocTotal" = 0 THEN T0."DpmAmnt"
-		ELSE T0."DocTotal"
-	END
-	
-	,0
-	) AS "Faturado Bruto",
+	SUM(T1."LineTotal"-COALESCE((SELECT SUM(COALESCE(NULLIF("U_TX_VlDeL", 0),"TaxSum")) FROM "INV4" tax WHERE tax."DocEntry" = T1."DocEntry" AND (tax."staType" = 25 OR tax."staType" = 28 OR tax."staType" = 10) AND tax."LineNum" = T1."LineNum"),0)) AS "Faturado Bruto",
 	COALESCE(T3."LineTotal", 0)AS "Frete"
 FROM
 	oinv T0
@@ -77,13 +71,15 @@ LEFT JOIN "CORDENADORESTRUTURA" cordena ON
 	T2."SlpCode" = cordena."codVendedor"
 WHERE
 	T0.CANCELED = 'N'
-	AND T0."DocDate" >= {?Data}
-	AND T0."DocDate" <= {?Data1}
+	AND T0."DocDate" >= '20240301'
+	AND T0."DocDate" <= '20240331'
 	AND T1."Usage" in(9,16)
-	AND T7."U_categoria" = 'bov'
-	AND T7."U_grupo_sustennutri" = 'racao'
+	AND T7."U_categoria" in( 'bov','equino')
+	AND T7."U_grupo_sustennutri" NOT IN ('quirela','milho','fora','farelo')
+	AND T7."U_linha_sustennutri" NOT IN ('fora','farelado')
 	AND T4."RefDocNum" IS NULL
 	AND T0."U_Rov_Refaturamento" = 'NAO'
+	AND T0."SlpCode" = 30
 	AND T0."CardCode" NOT IN(
 	SELECT
 		"DflCust"
@@ -93,10 +89,14 @@ WHERE
 		"DflCust" IS NOT NULL)
 	AND T2."U_Integracao_sovis" = 1
 	AND T2."U_filial" IS NOT NULL
+	--AND  T0."Serial" = 12701
 GROUP BY
 	T2."SlpCode",
+
 	T2."SlpName",
+
 	T2."U_MNO_Municipio",
+
 	T0."DocEntry",
 	T0."DocTotal",
 	T5."U_MNO_ANO",
@@ -111,6 +111,7 @@ GROUP BY
 	)
 	GROUP BY
 	"SlpName",
+--	"Serial",
 	"SlpCode",
 	"nomeCordenador",
 	"U_MNO_Municipio",

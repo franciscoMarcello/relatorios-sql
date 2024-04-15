@@ -1,4 +1,4 @@
-SELECT DISTINCT 
+  SELECT DISTINCT 
 T0."DocEntry",
 T0."CardCode",
 T0."CardName",
@@ -22,8 +22,11 @@ T7."GroupNum",
 grupo."BaseQty",
 T9."U_categoria",
 T9."U_linha_sustennutri" ,
-T9."U_grupo_sustennutri" 
-
+T9."U_grupo_sustennutri",
+COALESCE((SELECT SUM(COALESCE(NULLIF("U_TX_VlDeL", 0),"TaxSum")) FROM "INV4" tax WHERE tax."DocEntry" = T1."DocEntry" AND (tax."staType" = 25 OR tax."staType" = 28 OR tax."staType" = 10) AND tax."LineNum" = T1."LineNum"),0) AS "desonerado",
+T1."LineTotal"-COALESCE((SELECT SUM(COALESCE(NULLIF("U_TX_VlDeL", 0),"TaxSum")) FROM "INV4" tax WHERE tax."DocEntry" = T1."DocEntry" AND (tax."staType" = 25 OR tax."staType" = 28 OR tax."staType" = 10) AND tax."LineNum" = T1."LineNum"),0) AS "faturado",
+T1."Price",
+T1."U_preco_negociado"
 
 FROM "OINV"  T0 
 INNER JOIN "INV1"  T1 ON T0."DocEntry" = T1."DocEntry" 
@@ -38,5 +41,6 @@ WHERE T5."RefDocNum"  IS NULL AND
 T0."CANCELED" = 'N' AND
 (T1."Usage"  = 9 OR  T1."Usage"  = 16)
 
-  AND  T0."DocDate" >={?Data}AND T0."DocDate" <={?DataFinal} 
+--  AND  T0."DocDate" >={?Data}AND T0."DocDate" <={?DataFinal} 
 and T0."U_Rov_Refaturamento" = 'NAO'
+AND T0."Serial" = 12701
